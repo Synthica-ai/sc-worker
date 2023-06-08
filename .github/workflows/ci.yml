@@ -1,13 +1,10 @@
-name: Build and Publish Worker
-
-on:
-  push:
-    branches:
-      - master
+name: GitHub Actions
+on: push
 jobs:
-  build_and_publish_worker:
-    name: Build and Publish Worker
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - uses: actions/checkout@master
         with:
