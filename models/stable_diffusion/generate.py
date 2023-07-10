@@ -68,7 +68,10 @@ def generate(
         extra_kwargs["image"] = [init_image] * num_outputs
         extra_kwargs["strength"] = prompt_strength
     else:
-        pipe_selected = pipe.text2img
+        if model == 'Stable Diffusion XL':
+            pipe_selected = pipe
+        else:
+            pipe_selected = pipe.text2img
 
     generator = torch.Generator(DEVICE).manual_seed(seed)
     output = pipe_selected(
@@ -87,11 +90,15 @@ def generate(
     output_images = []
     nsfw_count = 0
 
-    for i, nsfw_flag in enumerate(output.nsfw_content_detected):
-        if nsfw_flag:
-            nsfw_count += 1
-        else:
+    if model == 'Stable Diffusion XL':
+        for i, _ in enumerate(output.images):
             output_images.append(output.images[i])
+    else:
+        for i, nsfw_flag in enumerate(output.nsfw_content_detected):
+            if nsfw_flag:
+                nsfw_count += 1
+            else:
+                output_images.append(output.images[i])
 
     if nsfw_count > 0:
         print(f"NSFW content detected in {nsfw_count}/{num_outputs} of the outputs.")

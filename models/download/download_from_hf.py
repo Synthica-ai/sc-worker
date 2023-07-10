@@ -1,5 +1,5 @@
 from models.stable_diffusion.constants import SD_MODELS_ALL, SD_MODELS, SD_MODEL_CACHE
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionPipeline, DiffusionPipeline
 import concurrent.futures
 import os
 from models.swinir.constants import MODEL_DIR_SWINIR, MODEL_NAME_SWINIR
@@ -19,12 +19,22 @@ def download_models_from_hf(downloadAll=True):
 def download_sd_model_from_hf(key):
     model_id = SD_MODELS_ALL[key]["id"]
     print(f"⏳ Downloading model: {model_id}")
-    pipe = StableDiffusionPipeline.from_pretrained(
-        model_id,
-        custom_pipeline="stable_diffusion_mega",
-        torch_dtype=SD_MODELS_ALL[key]["torch_dtype"],
-        cache_dir=SD_MODEL_CACHE,
-    )
+
+    if model_id == 'stabilityai/stable-diffusion-xl-base-0.9':
+        pipe = DiffusionPipeline.from_pretrained(
+            model_id,
+            torch_dtype=SD_MODELS_ALL[key]["torch_dtype"],
+            use_safetensors=True,
+            variant="fp16"
+        )
+    else:
+        pipe = StableDiffusionPipeline.from_pretrained(
+            model_id,
+            custom_pipeline="stable_diffusion_mega",
+            torch_dtype=SD_MODELS_ALL[key]["torch_dtype"],
+            cache_dir=SD_MODEL_CACHE,
+        )
+
     print(f"✅ Downloaded model: {key}")
     return {"key": key}
 

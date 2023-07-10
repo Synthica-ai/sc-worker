@@ -68,13 +68,23 @@ def setup(s3: ServiceResource, bucket_name: str) -> ModelsPack:
 
     for key in SD_MODELS:
         print(f"⏳ Loading SD model: {key}")
-        pipe = DiffusionPipeline.from_pretrained(
-            SD_MODELS[key]["id"],
-            custom_pipeline="stable_diffusion_mega",
-            torch_dtype=SD_MODELS[key]["torch_dtype"],
-            cache_dir=SD_MODEL_CACHE,
-        )
-        sd_pipes[key] = pipe.to(DEVICE)
+        if SD_MODELS[key]["id"] == 'stabilityai/stable-diffusion-xl-base-0.9':
+            pipe = DiffusionPipeline.from_pretrained(
+                SD_MODELS[key]["id"],
+                torch_dtype=SD_MODELS[key]["torch_dtype"],
+                use_safetensors=True,
+                variant="fp16",
+                cache_dir=SD_MODEL_CACHE,
+            )
+            sd_pipes[key] = pipe.to(DEVICE)
+        else:
+            pipe = DiffusionPipeline.from_pretrained(
+                SD_MODELS[key]["id"],
+                custom_pipeline="stable_diffusion_mega",
+                torch_dtype=SD_MODELS[key]["torch_dtype"],
+                cache_dir=SD_MODEL_CACHE,
+            )
+            sd_pipes[key] = pipe.to(DEVICE)
         print(f"✅ Loaded SD model: {key}")
 
     # Safety checker

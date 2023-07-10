@@ -1,3 +1,14 @@
+import debugpy
+import os
+
+# if os.environ.get("DEBUG") == "true":
+#     # 5678 is the default attach port in the VS Code debug configurations. Unless a host and port are specified, host defaults to 127.0.0.1
+#     debugpy.listen(5678)
+#     print("Waiting for debugger attach")
+#     debugpy.wait_for_client()
+#     debugpy.breakpoint()
+#     print('break on this line')
+
 from threading import Thread
 from typing import Any, Dict, Callable
 import os
@@ -5,6 +16,7 @@ import queue
 
 import redis
 import boto3
+import time
 from boto3_type_annotations.s3 import ServiceResource
 from botocore.config import Config
 from dotenv import load_dotenv
@@ -25,7 +37,7 @@ from clipapi.app import run_clipapi
 
 if __name__ == "__main__":
     if torch.cuda.is_available() is False:
-        os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
     load_dotenv()
 
     redisUrl = os.environ.get("REDIS_URL")
@@ -41,7 +53,6 @@ if __name__ == "__main__":
         endpoint_url=S3_ENDPOINT_URL,
         aws_access_key_id=S3_ACCESS_KEY_ID,
         aws_secret_access_key=S3_SECRET_ACCESS_KEY,
-        config=Config(retries={"max_attempts": 3, "mode": "standard"}),
     )
 
     # Setup predictor

@@ -32,6 +32,11 @@ SD_MODELS_ALL = {
         "torch_dtype": torch.float16,
         "branch": "fp16",
     },
+    "Stable Diffusion XL": {
+        "id": "stabilityai/stable-diffusion-xl-base-0.9",
+        "torch_dtype": torch.float16,
+        "branch": "fp16",
+    },
     "Openjourney": {
         "id": "prompthero/openjourney",
         "prompt_prefix": "mdjrny-v4 style",
