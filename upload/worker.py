@@ -10,12 +10,23 @@ from typing import List, Iterable, Dict, Any, Callable
 import redis
 from boto3_type_annotations.s3 import ServiceResource
 from PIL import Image
+import numpy as np
 
 from predict.predict import PredictResult, PredictOutput
 from rdqueue.events import Status
 from shared.helpers import ensure_trailing_slash, parse_content_type
 from shared.webhook import post_webhook
 
+from imwatermark import WatermarkEncoder
+import cv2
+
+
+def put_watermark(img, wm_encoder=None):
+    if wm_encoder is not None:
+        img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        img = wm_encoder.encode(img, 'dwtDct')
+        img = Image.fromarray(img[:, :, ::-1])
+    return img
 
 def convert_and_upload_to_s3(
     s3: ServiceResource,
@@ -32,6 +43,12 @@ def convert_and_upload_to_s3(
     if target_extension == "jpeg":
         print(f"-- Upload: Converting to JPEG")
         _pil_image = _pil_image.convert("RGB")
+
+    wm = "SynthicaV1"
+    wm_encoder = WatermarkEncoder()
+    wm_encoder.set_watermark('bytes', wm.encode('utf-8'))
+    _pil_image = put_watermark(_pil_image, wm_encoder)
+
     img_format = target_extension.upper()
     img_bytes = io.BytesIO()
     _pil_image.save(img_bytes, format=img_format, quality=target_quality)
