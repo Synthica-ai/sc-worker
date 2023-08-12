@@ -33,7 +33,7 @@ SD_MODELS_ALL = {
         "branch": "fp16",
     },
     "Stable Diffusion XL": {
-        "id": "stabilityai/stable-diffusion-xl-base-0.9",
+        "id": "stabilityai/stable-diffusion-xl-base-1.0",
         "torch_dtype": torch.float16,
         "branch": "fp16",
     },

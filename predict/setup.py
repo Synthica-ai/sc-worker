@@ -68,7 +68,7 @@ def setup(s3: ServiceResource, bucket_name: str) -> ModelsPack:
 
     for key in SD_MODELS:
         print(f"⏳ Loading SD model: {key}")
-        if SD_MODELS[key]["id"] == 'stabilityai/stable-diffusion-xl-base-0.9':
+        if SD_MODELS[key]["id"] == 'stabilityai/stable-diffusion-xl-base-1.0':
             pipe = DiffusionPipeline.from_pretrained(
                 SD_MODELS[key]["id"],
                 torch_dtype=SD_MODELS[key]["torch_dtype"],

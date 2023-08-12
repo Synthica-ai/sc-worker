@@ -20,7 +20,7 @@ def download_sd_model_from_hf(key):
     model_id = SD_MODELS_ALL[key]["id"]
     print(f"⏳ Downloading model: {model_id}")
 
-    if model_id == 'stabilityai/stable-diffusion-xl-base-0.9':
+    if model_id == 'stabilityai/stable-diffusion-xl-base-1.0':
         pipe = DiffusionPipeline.from_pretrained(
             model_id,
             torch_dtype=SD_MODELS_ALL[key]["torch_dtype"],
